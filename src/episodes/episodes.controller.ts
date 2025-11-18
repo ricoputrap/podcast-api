@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
 
 interface IEpisode {
   id: number;
@@ -32,7 +32,7 @@ export class EpisodesController {
   }
 
   @Get(':id')
-  findOne(@Query('id') id: number) {
+  findOne(@Param('id') id: number) {
     console.log('Fetching episode with id:', id);
     const episode = episodes.find((ep) => ep.id == Number(id));
     return { data: episode };
