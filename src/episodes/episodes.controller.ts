@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Delete,
 } from '@nestjs/common';
+import { EpisodesService } from './episodes.service';
 
 interface IEpisode {
   id: number;
@@ -25,19 +26,11 @@ const episodes: IEpisode[] = [
 
 @Controller('episodes')
 export class EpisodesController {
-  @Get()
-  findAll(@Query('sort') sort: 'asc' | 'desc' = 'asc') {
-    let sortedEpisodes = [...episodes];
-    if (sort === 'desc') {
-      sortedEpisodes = sortedEpisodes.sort((a, b) =>
-        b.title.localeCompare(a.title),
-      );
-    } else {
-      sortedEpisodes = sortedEpisodes.sort((a, b) =>
-        a.title.localeCompare(b.title),
-      );
-    }
+  constructor(private episodesService: EpisodesService) {}
 
+  @Get()
+  async findAll(@Query('sort') sort: 'asc' | 'desc' = 'asc') {
+    const sortedEpisodes = await this.episodesService.findAll(sort);
     return { data: sortedEpisodes };
   }
 
