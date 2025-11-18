@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Param,
+  Patch,
+  NotFoundException,
+} from '@nestjs/common';
 
 interface IEpisode {
   id: number;
@@ -49,8 +58,25 @@ export class EpisodesController {
     const newEpisode: IEpisode = {
       id: episodes.length + 1,
       ...episodeData,
-    }
+    };
     episodes.push(newEpisode);
     return { message: 'Episode created', data: newEpisode };
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: number,
+    @Body() episodeData: Partial<Omit<IEpisode, 'id'>>,
+  ) {
+    const episodeIndex = episodes.findIndex((ep) => ep.id == Number(id));
+    if (episodeIndex === -1) {
+      throw new NotFoundException('Episode not found');
+    }
+    const updatedEpisode = {
+      ...episodes[episodeIndex],
+      ...episodeData,
+    };
+    episodes[episodeIndex] = updatedEpisode;
+    return { message: 'Episode updated', data: updatedEpisode };
   }
 }
