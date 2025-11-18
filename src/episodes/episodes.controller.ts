@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   NotFoundException,
+  Delete,
 } from '@nestjs/common';
 
 interface IEpisode {
@@ -78,5 +79,15 @@ export class EpisodesController {
     };
     episodes[episodeIndex] = updatedEpisode;
     return { message: 'Episode updated', data: updatedEpisode };
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: number) {
+    const episodeIndex = episodes.findIndex((ep) => ep.id == Number(id));
+    if (episodeIndex === -1) {
+      throw new NotFoundException('Episode not found');
+    }
+    episodes.splice(episodeIndex, 1);
+    return { message: 'Episode deleted' };
   }
 }
