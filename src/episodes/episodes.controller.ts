@@ -9,16 +9,15 @@ import {
   Delete,
 } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
-
-interface IEpisode {
-  id: number;
-  title: string;
-  featured: boolean;
-}
+import { ConfigService } from '../config/config.service';
+import { type CreateEpisodeDto } from './dto/create-episode.dto';
 
 @Controller('episodes')
 export class EpisodesController {
-  constructor(private episodesService: EpisodesService) {}
+  constructor(
+    private episodesService: EpisodesService,
+    private configService: ConfigService,
+  ) {}
 
   @Get()
   async findAll(@Query('sort') sort: 'asc' | 'desc' = 'asc') {
@@ -40,7 +39,7 @@ export class EpisodesController {
   }
 
   @Post()
-  async create(@Body() episodeData: Omit<IEpisode, 'id'>) {
+  async create(@Body() episodeData: CreateEpisodeDto) {
     const newEpisode = await this.episodesService.create(episodeData);
     return { message: 'Episode created', data: newEpisode };
   }
@@ -48,7 +47,7 @@ export class EpisodesController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() episodeData: Partial<Omit<IEpisode, 'id'>>,
+    @Body() episodeData: Partial<CreateEpisodeDto>,
   ) {
     const updatedEpisode = await this.episodesService.update(id, episodeData);
     return { message: 'Episode updated', data: updatedEpisode };
