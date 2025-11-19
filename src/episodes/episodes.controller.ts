@@ -14,6 +14,7 @@ import {
 import { EpisodesService } from './episodes.service';
 import { ConfigService } from '../config/config.service';
 import { type CreateEpisodeDto } from './dto/create-episode.dto';
+import { IsPositivePipe } from 'src/is-positive/is-positive.pipe';
 
 @Controller('episodes')
 export class EpisodesController {
@@ -25,7 +26,8 @@ export class EpisodesController {
   @Get()
   async findAll(
     @Query('sort') sort: 'asc' | 'desc' = 'asc',
-    @Query('limit', new DefaultValuePipe(2), ParseIntPipe) limit: number,
+    @Query('limit', new DefaultValuePipe(2), ParseIntPipe, IsPositivePipe)
+    limit: number,
   ) {
     const sortedEpisodes = await this.episodesService.findAll(sort, limit);
     return { data: sortedEpisodes };
