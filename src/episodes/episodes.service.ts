@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Episode } from './entity/episode.entity';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { randomUUID } from 'crypto';
@@ -46,5 +46,36 @@ export class EpisodesService {
     };
     this.episodes.push(newEpisode);
     return newEpisode;
+  }
+
+  async update(
+    id: string,
+    updateData: Partial<CreateEpisodeDto>,
+  ): Promise<Episode | undefined> {
+    // TODO remove this mock delay in real implementation
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const episodeIndex = this.episodes.findIndex((ep) => ep.id === id);
+    if (episodeIndex === -1) {
+      throw new NotFoundException('Episode not found');
+    }
+    const updatedEpisode = {
+      ...this.episodes[episodeIndex],
+      ...updateData,
+    };
+    this.episodes[episodeIndex] = updatedEpisode;
+    return updatedEpisode;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    // TODO remove this mock delay in real implementation
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const episodeIndex = this.episodes.findIndex((ep) => ep.id === id);
+    if (episodeIndex === -1) {
+      throw new NotFoundException('Episode not found');
+    }
+    this.episodes.splice(episodeIndex, 1);
+    return true;
   }
 }
