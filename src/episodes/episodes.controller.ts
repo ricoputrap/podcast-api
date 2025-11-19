@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { ConfigService } from '../config/config.service';
@@ -26,9 +27,11 @@ export class EpisodesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: string) {
     console.log('Fetching episode with id:', id);
-    const episode = this.episodesService.findOne(id.toString());
+    const episode = await this.episodesService.findOne(id);
+    if (!episode) throw new NotFoundException('Episode not found');
+
     return { data: episode };
   }
 
