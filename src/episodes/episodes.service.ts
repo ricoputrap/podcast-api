@@ -12,7 +12,10 @@ export class EpisodesService {
     { id: '4', title: 'Episode 4', featured: false },
   ];
 
-  async findAll(sort: 'asc' | 'desc' = 'asc'): Promise<Episode[]> {
+  async findAll(
+    sort: 'asc' | 'desc' = 'asc',
+    limit: number,
+  ): Promise<Episode[]> {
     // TODO remove this mock delay in real implementation
     await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -20,8 +23,8 @@ export class EpisodesService {
     const sortDesc = (a: Episode, b: Episode) => b.title.localeCompare(a.title);
 
     return sort === 'asc'
-      ? this.episodes.sort(sortAsc)
-      : this.episodes.sort(sortDesc);
+      ? this.episodes.sort(sortAsc).slice(0, limit)
+      : this.episodes.sort(sortDesc).slice(0, limit);
   }
 
   async findOne(id: string): Promise<Episode | undefined> {

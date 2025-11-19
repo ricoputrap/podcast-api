@@ -8,6 +8,8 @@ import {
   Patch,
   Delete,
   NotFoundException,
+  ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { ConfigService } from '../config/config.service';
@@ -21,8 +23,11 @@ export class EpisodesController {
   ) {}
 
   @Get()
-  async findAll(@Query('sort') sort: 'asc' | 'desc' = 'asc') {
-    const sortedEpisodes = await this.episodesService.findAll(sort);
+  async findAll(
+    @Query('sort') sort: 'asc' | 'desc' = 'asc',
+    @Query('limit', new DefaultValuePipe(2), ParseIntPipe) limit: number,
+  ) {
+    const sortedEpisodes = await this.episodesService.findAll(sort, limit);
     return { data: sortedEpisodes };
   }
 
